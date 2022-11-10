@@ -1,64 +1,56 @@
-import React, { useState } from 'react';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
-import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import React, { useEffect, useState } from "react";
+import Axios from "axios";
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
-function Clients() {
-    return (
-        <div className='main-content'>
-            <Card>
-                <Card.Body>
-                    <Row>
-                        <Col xs={12}>
-                            <Card.Title>
-                                Clientes 
-                                <ModalNewClient/>
-                            </Card.Title>
-                        </Col>
-                    </Row>
-                    
-                    <Row className="justify-content-md-center">
-                        <Col xs={12}>
-                            <Table striped bordered hover>
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Nome</th>
-                                        <th>CPF</th>
-                                        <th>E-mail</th>
-                                        <th>Nascimento</th>
-                                        <th>Endereço</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                        <td>@mdo</td>
-                                        <td>@mdo</td>
-                                    </tr>
-                                </tbody>
-                            </Table>
-                        </Col>
-                    </Row>
-                </Card.Body>
-            </Card>
-        </div>
-    );
-}
-
-function ModalNewClient() {
+function ModalNewClient(props) {
+    const [values, setValues] = useState();
     const [show, setShow] = useState(false);
   
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    
+    const handleNewClient = () => {
+        Axios.post("http://127.0.0.1:8000/api/clients/store", {
+          data: values,
+        }).then((response) => {
+            var result = response.data;
+            if(result.response == 200){
+                console.log(result.data)
+                props.setListClients([
+                    ...props.listClients,
+                    {
+                        id: result.data.id,
+                        name: values.name,
+                        cpf: values.cpf,
+                        email: values.email,
+                        birthday: values.birthday,
+                        cep: values.cep,
+                        street: values.street,
+                        district: values.district,
+                        city: values.city,
+                        complement: values.complement,
+                        number: values.number,
+                    },
+                ]);
+
+                setShow(false)
+                
+            }
+
+            props.handleShowMessage(result.response, result.message)
+        });
+    };
+
+    const handleAddValues = (value) => {
+        setValues((prevValues) => ({
+          ...prevValues,
+          [value.target.name]: value.target.value,
+        }));
+    };
   
     return (
       <>
@@ -73,23 +65,15 @@ function ModalNewClient() {
             <Modal.Body>
                 <Form>
                     <Row>
-                        <Col xs={6}>
-                            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                <Form.Label>Codigo</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder=""
-                                    autoFocus
-                                />
-                            </Form.Group>
-                        </Col>
-                        <Col xs={6}>
+                        <Col xs={12}>
                             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                 <Form.Label>Nome</Form.Label>
                                 <Form.Control
                                     type="text"
+                                    name="name"
                                     placeholder=""
                                     autoFocus
+                                    onChange={handleAddValues}
                                 />
                             </Form.Group>
                         </Col>
@@ -101,8 +85,10 @@ function ModalNewClient() {
                                 <Form.Label>CPF</Form.Label>
                                 <Form.Control
                                     type="text"
+                                    name="cpf"
                                     placeholder=""
                                     autoFocus
+                                    onChange={handleAddValues}
                                 />
                             </Form.Group>
                         </Col>
@@ -111,8 +97,10 @@ function ModalNewClient() {
                                 <Form.Label>E-mail</Form.Label>
                                 <Form.Control
                                     type="email"
+                                    name="email"
                                     placeholder=""
                                     autoFocus
+                                    onChange={handleAddValues}
                                 />
                             </Form.Group>
                         </Col>
@@ -123,9 +111,11 @@ function ModalNewClient() {
                             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                 <Form.Label>Nascimento</Form.Label>
                                 <Form.Control
-                                    type="text"
+                                    type="date"
+                                    name="birthday"
                                     placeholder=""
                                     autoFocus
+                                    onChange={handleAddValues}
                                 />
                             </Form.Group>
                         </Col>
@@ -134,8 +124,10 @@ function ModalNewClient() {
                                 <Form.Label>CEP</Form.Label>
                                 <Form.Control
                                     type="text"
+                                    name="cep"
                                     placeholder=""
                                     autoFocus
+                                    onChange={handleAddValues}
                                 />
                             </Form.Group>
                         </Col>
@@ -147,8 +139,10 @@ function ModalNewClient() {
                                 <Form.Label>Logradouro</Form.Label>
                                 <Form.Control
                                     type="text"
+                                    name="street"
                                     placeholder=""
                                     autoFocus
+                                    onChange={handleAddValues}
                                 />
                             </Form.Group>
                         </Col>
@@ -157,8 +151,10 @@ function ModalNewClient() {
                                 <Form.Label>Bairro</Form.Label>
                                 <Form.Control
                                     type="text"
+                                    name="district"
                                     placeholder=""
                                     autoFocus
+                                    onChange={handleAddValues}
                                 />
                             </Form.Group>
                         </Col>
@@ -170,8 +166,10 @@ function ModalNewClient() {
                                 <Form.Label>Cidade</Form.Label>
                                 <Form.Control
                                     type="text"
+                                    name="city"
                                     placeholder=""
                                     autoFocus
+                                    onChange={handleAddValues}
                                 />
                             </Form.Group>
                         </Col>
@@ -180,8 +178,10 @@ function ModalNewClient() {
                                 <Form.Label>Complemento</Form.Label>
                                 <Form.Control
                                     type="text"
+                                    name="complement"
                                     placeholder=""
                                     autoFocus
+                                    onChange={handleAddValues}
                                 />
                             </Form.Group>
                         </Col>
@@ -191,8 +191,10 @@ function ModalNewClient() {
                                 <Form.Label>Numero</Form.Label>
                                 <Form.Control
                                     type="number"
+                                    name="number"
                                     placeholder=""
                                     autoFocus
+                                    onChange={handleAddValues}
                                 />
                             </Form.Group>
                         </Col>
@@ -203,7 +205,7 @@ function ModalNewClient() {
                 <Button variant="secondary" onClick={handleClose}>
                     Fechar
                 </Button>
-                <Button variant="primary" onClick={handleClose}>
+                <Button variant="primary" onClick={handleNewClient}>
                     Salvar
                 </Button>
             </Modal.Footer>
@@ -211,5 +213,5 @@ function ModalNewClient() {
       </>
     );
   }
-  
-export default Clients;
+
+export default ModalNewClient;

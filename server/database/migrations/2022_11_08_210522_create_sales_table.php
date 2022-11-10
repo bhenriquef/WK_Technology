@@ -14,7 +14,14 @@ return new class extends Migration
     public function up()
     {
         Schema::create('sales', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
+
+            $table->dateTime('sale_date');
+            $table->float('total_price',26, 4);
+
+            $table->integer('client_id')->unsigned();
+            $table->foreign('client_id')->references('id')->on('clients');
+            
             $table->timestamps();
         });
     }
